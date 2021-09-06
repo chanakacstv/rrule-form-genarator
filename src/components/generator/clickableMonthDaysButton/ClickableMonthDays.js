@@ -39,7 +39,7 @@ export const ClickableMonthDays = prop => {
           onChange={e => {
             const { name, value } = e.target
             setFieldValue(name, value)
-            handleSetByOnChange(e, values)
+            handleSetByOnChange(e, values, setFieldValue)
           }}
           value="date"
         />
@@ -53,7 +53,7 @@ export const ClickableMonthDays = prop => {
               key={item.value}
               name={item}
               value={item}
-              onClick={() => handleMonthDatesSelect(item, values)}
+              onClick={() => handleMonthDatesSelect(item, values, setFieldValue)}
               longItem={item === 'Last Day'}
               disabled={values.setBy === 'day'}
             />
@@ -69,7 +69,7 @@ export const ClickableMonthDays = prop => {
             onChange={e => {
               const { name, value } = e.target
               setFieldValue(name, value)
-              handleSetByOnChange(e, values)
+              handleSetByOnChange(e, values, setFieldValue)
             }}
             value="day"
           />
@@ -84,7 +84,7 @@ export const ClickableMonthDays = prop => {
             options={RruleHelper.WEEKS_TYPES}
             onChange={(name, value) => {
               setFieldValue(name, value)
-              handleWeekTypeOnChange(value, values)
+              handleWeekTypeOnChange(value, values, setFieldValue)
             }}
             onBlur={setFieldTouched}
             isSearchable={false}
@@ -103,7 +103,7 @@ export const ClickableMonthDays = prop => {
             options={RruleHelper.FULL_WEEK_DAYS}
             onChange={(name, value) => {
               setFieldValue(name, value)
-              handleDaysTypeOnChange(value, values)
+              handleDaysTypeOnChange(value, values, setFieldValue)
             }}
             onBlur={setFieldTouched}
             isSearchable={false}

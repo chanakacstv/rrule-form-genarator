@@ -14,6 +14,7 @@ function App() {
     startDate: moment().toDate(),
     endDate: moment().add(1, 'days'),
     weekType: RruleHelper.WEEKS_TYPES[0],
+    weekDays: RruleHelper.WEEK_DAYS,
     days: RruleHelper.FULL_WEEK_DAYS[0],
     rrule: '',
     setBy: 'date'

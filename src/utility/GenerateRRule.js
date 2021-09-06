@@ -19,7 +19,7 @@ export const GenerateRRule = (
       interval: frequencyInterval
     }
   } = values
-
+console.log('selectedWeekDays', selectedWeekDays)
   switch (frequencyValue) {
     case RruleHelper.FREQUENCY_VALUES.DAILY.value:
       return GenerateDailyRRule(

@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
-import moment from 'moment'
+import moment, { weekdays } from 'moment'
 import * as yup from 'yup'
 import { RRule, RRuleSet, rrulestr } from 'rrule'
 import { DateTime } from "luxon"
@@ -13,7 +13,7 @@ const GeneratorProvider = ({ children, componentProps }) => {
   const { setRruleFormValue, rruleFormValue } = componentProps
 
   const [selectedFrequencyType, setSelectedFrequencyType] = useState(
-    RruleHelper.FREQUENCY_VALUES.ONE_TIME.value
+    RruleHelper.FREQUENCY_VALUES.ONE_TIME_READ_ONLY.value
   )
   const [selectedDatesOfMonth, setSelectedDatesOfMonth] = useState([])
   const [selectedDatesOfWeek, setSelectedDatesOfWeek] = useState([])
@@ -24,6 +24,15 @@ const GeneratorProvider = ({ children, componentProps }) => {
   const FORM_INITIAL_VALUES = rruleFormValue
 
   const FORM_YUP_VALIDATIONS = yup.object().shape({ })
+
+  // const now = DateTime.now();
+  // const dt = DateTime.fromObject({day: 22, hour: 12 }, { zone: 'America/Los_Angeles', numberingSystem: 'beng'})
+  // console.log('aneeee', DateTime.now().setZone("America/Los_Angeles"))
+
+  // const a = now.plus({ hours: 3, minutes: 2 });
+  // const b = now.minus({ days: 7 });
+
+  // console.log('hey', a.zoneName, b.toLocaleString())
 
   // const rule = new RRule({
   //   freq: RRule.WEEKLY,
@@ -65,66 +74,86 @@ const GeneratorProvider = ({ children, componentProps }) => {
       ...FORM_INITIAL_VALUES,
       rrule: GenerateRRule(FORM_INITIAL_VALUES, selectedDatesOfWeek, selectedDatesOfMonth)
     })
+    setSelectedDatesOfWeek(
+      rruleFormValue.weekDays.filter(weekDays => weekDays.isSelected)
+    )
   }, [])
 
   const formSumbit = (values, actions) => {}
 
   const handleFrequencyOnChange = (
     selectedValue,
-    formValues
+    formValues,
+    setFieldValue,
+    resetForm,
    ) => {
     const { value } = selectedValue
     const updatedFormValues = {
       ...formValues,
       frequency: selectedValue,
     }
+    const rrule = GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
     setSelectedFrequencyType(value)
     setRruleFormValue({
       ...updatedFormValues,
-      rrule: GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
+      rrule
     })
+    setFieldValue('rrule', rrule)
+    // resetFormikForm(
+    //   resetForm,
+    //   selectedValue,
+    // )
   }
 
   const handleDueDateOnChange = (
     selectedValue,
-    formValues
+    formValues,
+    setFieldValue
    ) => {
     const updatedFormValues = {
       ...formValues,
       dueDate: selectedValue,
     }
+    const rrule = GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
     setRruleFormValue({
       ...updatedFormValues,
-      rrule: GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
+      rrule
     })
+    setFieldValue('rrule', rrule)
    }
 
   const handleStartDateOnChange = (
     selectedValue,
-    formValues
+    formValues,
+    setFieldValue
    ) => {
     const updatedFormValues = {
       ...formValues,
       startDate: selectedValue,
     }
+    const rrule = GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
     setRruleFormValue({
       ...updatedFormValues,
-      rrule: GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
+      rrule
     })
+    setFieldValue('rrule', rrule)
    }
 
   const handleEndDateOnChange = (
     selectedValue,
-    formValues
+    formValues,
+    setFieldValue
    ) => {
     const updatedFormValues = {
       ...formValues,
       endDate: selectedValue,
     }
+    const rrule = GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
     setRruleFormValue({
       ...updatedFormValues,
-      rrule: GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
+      rrule
     })
+    setFieldValue('rrule', rrule)
   }
 
   const clearRRuleStates = () => {
@@ -132,94 +161,163 @@ const GeneratorProvider = ({ children, componentProps }) => {
     setSelectedDatesOfMonth([])
   }
 
-  const handleWeekDatesSelect = (
+  console.log('formik selectedDatesOfWeek', selectedDatesOfWeek)
+
+  const handleMultipleWeekDatesSelect = (
     value,
-    formValues
+    formValues,
+    setFieldValue
    ) => {
-    const cloneArrWeekDays = [...selectedDatesOfWeek]
-    if (cloneArrWeekDays.includes(value)) {
-      const filtered = cloneArrWeekDays.filter(element => element !== value)
-      setSelectedDatesOfWeek(filtered)
-      setRruleFormValue({
-        ...formValues, 
-        rrule: GenerateRRule(formValues, filtered, selectedDatesOfMonth)
-      })
-    } else {
-      cloneArrWeekDays.push(value)
-      setSelectedDatesOfWeek(cloneArrWeekDays)
-      setRruleFormValue({
-        ...formValues, 
-        rrule: GenerateRRule(formValues, cloneArrWeekDays, selectedDatesOfMonth)
-      })
-    }
+    const selectedWeekDays = formValues.weekDays.map(weekDays => {
+      if (value === weekDays.value) {
+        weekDays.isSelected = !weekDays.isSelected
+      }
+
+      return weekDays
+    })
+    
+    const selectedWeekDaysArray = selectedWeekDays.filter(weekDays => {
+      if (weekDays.isSelected) {
+        return weekDays.value
+      }
+    })
+    const rrule = GenerateRRule(formValues, selectedWeekDaysArray, selectedDatesOfMonth)
+
+    setSelectedDatesOfWeek(selectedWeekDays)
+    setRruleFormValue({
+      ...formValues, 
+      rrule
+    })
+    setFieldValue(
+      'weekDays',
+      selectedWeekDays
+    )
+    setFieldValue('rrule', rrule)
+  }
+
+  const handleSingleWeekDatesSelect = (
+    value,
+    formValues,
+    setFieldValue
+   ) => {
+    const selectedWeekDays = formValues.weekDays.map(weekDays => {
+      if (value === weekDays.value) {
+        weekDays.isSelected = !weekDays.isSelected
+      } else {
+        weekDays.isSelected = false
+      }
+
+      return weekDays
+    })
+    
+    const selectedWeekDaysArray = selectedWeekDays.filter(weekDays => {
+      if (weekDays.isSelected) {
+        return weekDays.value
+      }
+    })
+    const rrule = GenerateRRule(formValues, selectedWeekDaysArray, selectedDatesOfMonth)
+
+    setSelectedDatesOfWeek(selectedWeekDays)
+    setRruleFormValue({
+      ...formValues, 
+      rrule
+    })
+    setFieldValue(
+      'weekDays',
+      selectedWeekDays
+    )
+    setFieldValue('rrule', rrule)
   }
 
   const handleMonthDatesSelect = (
     value,
-    formValues
+    formValues,
+    setFieldValue
    ) => {
+    let rrule;
     const cloneDatesOfMonth = [...selectedDatesOfMonth]
+    
     if (cloneDatesOfMonth.includes(typeof value === 'string' ? -1 : value)) {
       const filtered = cloneDatesOfMonth.filter(element =>
         value !== 'Last Day' ? element !== value : element !== -1
-      )
+        )
+      rrule = GenerateRRule(formValues, selectedDatesOfWeek, filtered)
       setSelectedDatesOfMonth(filtered)
       setRruleFormValue({
         ...formValues, 
-        rrule: GenerateRRule(formValues, selectedDatesOfWeek, filtered)
+        rrule
       })
+      setFieldValue('rrule', rrule)
     } else {
       cloneDatesOfMonth.push(value === 'Last Day' ? -1 : value)
+      rrule = GenerateRRule(formValues, selectedDatesOfWeek, cloneDatesOfMonth)
       setSelectedDatesOfMonth(cloneDatesOfMonth)
       setRruleFormValue({
         ...formValues, 
-        rrule: GenerateRRule(formValues, selectedDatesOfWeek, cloneDatesOfMonth)
+        rrule
       })
+      setFieldValue('rrule', rrule)
     }
   }
 
   const handleSetByOnChange = (
     event,
-    formValues
+    formValues,
+    setFieldValue
    ) => {
     const { value } = event.target
     const updatedFormValues = {
       ...formValues,
       setBy: value,
     }
+    const rrule = GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
     setRruleFormValue({
       ...updatedFormValues,
-      rrule: GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
+      rrule
     })
+    setFieldValue('rrule', rrule)
   }
 
   const handleWeekTypeOnChange = (
     selectedValue,
-    formValues
+    formValues,
+    setFieldValue
   ) => {
     const updatedFormValues = {
       ...formValues,
       weekType: selectedValue,
     }
+    const rrule = GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
     setRruleFormValue({
       ...updatedFormValues,
-      rrule: GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
+      rrule
     })
+    setFieldValue('rrule', rrule)
   }
 
   const handleDaysTypeOnChange = (
     selectedValue,
-    formValues
+    formValues,
+    setFieldValue
   ) => {
     const updatedFormValues = {
       ...formValues,
       days: selectedValue,
     }
+    const rrule = GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
     setRruleFormValue({
       ...updatedFormValues,
-      rrule: GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
+      rrule
     })
+    setFieldValue('rrule', rrule)
   }
+
+  // const resetFormikForm = (
+  //   resetForm,
+  //   frequency,
+  // ) => {
+  //   values.
+  // };
 
   return (
     <GeneratorContext.Provider
@@ -233,7 +331,8 @@ const GeneratorProvider = ({ children, componentProps }) => {
         handleDueDateOnChange,
         handleMonthDatesSelect,
         selectedDatesOfMonth,
-        handleWeekDatesSelect,
+        handleMultipleWeekDatesSelect,
+        handleSingleWeekDatesSelect,
         endMinimumDate,
         setEndMinimumDate,
         handleStartDateOnChange,

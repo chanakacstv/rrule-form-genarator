@@ -21,6 +21,7 @@ export const RruleHelper = Object.freeze({
     { label: 'One-Time', value: 0, interval: 0 },
     { label: 'Daily', value: 1, interval: 1 },
     { label: 'Weekly', value: 7, interval: 1 },
+    { label: 'Bi-Weekly', value: 14, interval: 2 },
     { label: 'Monthly', value: 30, interval: 1 },
     { label: 'Bi-Monthly', value: 60, interval: 2 },
     { label: 'Quarterly', value: 90, interval: 3 },
@@ -30,6 +31,7 @@ export const RruleHelper = Object.freeze({
 
   FREQUENCY_VALUES: {
     ONE_TIME: { label: 'One-Time', value: 0, valueString: '' },
+    ONE_TIME_READ_ONLY: { label: 'One-Time', value: -1, valueString: '' },
     DAILY: { label: 'Daily', value: 1, valueString: 'DAILY' },
     WEEKLY: { label: 'Weekly', value: 7, valueString: 'WEEKLY' },
     BI_WEEKLY: { label: 'Bi-Weekly', value: 14, valueString: 'BI_WEEKLY' },
@@ -59,13 +61,13 @@ export const RruleHelper = Object.freeze({
   ],
 
   WEEK_DAYS: [
-    { label: 'S', value: 'Sunday' },
-    { label: 'M', value: 'Monday' },
-    { label: 'T', value: 'Tuesday' },
-    { label: 'W', value: 'Wednesday' },
-    { label: 'T', value: 'Thursday' },
-    { label: 'F', value: 'Friday' },
-    { label: 'S', value: 'Saturday' }
+    { label: 'S', value: 'Sunday', isSelected: true },
+    { label: 'M', value: 'Monday', isSelected: false },
+    { label: 'T', value: 'Tuesday', isSelected: false },
+    { label: 'W', value: 'Wednesday', isSelected: false },
+    { label: 'T', value: 'Thursday', isSelected: false },
+    { label: 'F', value: 'Friday', isSelected: false },
+    { label: 'S', value: 'Saturday', isSelected: false }
   ],
 
   DAYS_OF_MONTH: [

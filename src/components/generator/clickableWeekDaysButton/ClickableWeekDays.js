@@ -6,9 +6,8 @@ import PropTypes from 'prop-types'
 import './ClickableWeekDays.css'
 
 export const ClickableWeekDays = props => {
-  const { longItem, onClick, value, disabled, name } = props
-  
-  const [backgroundColor, setBackgroundColor] = useState('default')
+  const { longItem, onClick, value, disabled, name, defaultSelected } = props
+
   const [widthStyles, setWIdthStyles] = useState('')
 
   useEffect(() => {
@@ -17,19 +16,10 @@ export const ClickableWeekDays = props => {
     }
   }, [longItem])
 
-  const handleClick = () => {
-    backgroundColor === 'default'
-      ? setBackgroundColor('clicked')
-      : setBackgroundColor('default')
-  }
-
   return (
     <Button
-      className={`clickButton ${backgroundColor} ${widthStyles}`}
-      onClick={() => {
-        handleClick()
-        onClick()
-      }}
+      className={`clickButton ${defaultSelected ? 'clicked' : 'default'} ${widthStyles}`}
+      onClick={() => onClick()}
       value={value}
       disabled={disabled}
     >

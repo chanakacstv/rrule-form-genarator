@@ -20,7 +20,8 @@ export const ReactRRuleGenerator = props => {
     handleDueDateOnChange,
     selectedFrequencyType,
     handleMonthDatesSelect,
-    handleWeekDatesSelect,
+    handleMultipleWeekDatesSelect,
+    handleSingleWeekDatesSelect,
     endMinimumDate,
     setEndMinimumDate,
     handleStartDateOnChange,
@@ -42,7 +43,8 @@ export const ReactRRuleGenerator = props => {
         handleBlur,
         handleSubmit,
         setFieldValue,
-        setFieldTouched
+        setFieldTouched,
+        resetForm
       }) => (
         <Form onSubmit={handleSubmit}>
           <div className="form-body">
@@ -58,7 +60,7 @@ export const ReactRRuleGenerator = props => {
                 options={RruleHelper.FREQUENCY}
                 onChange={(name, value) => {
                   setFieldValue(name, value)
-                  handleFrequencyOnChange(value, values)
+                  handleFrequencyOnChange(value, values, setFieldValue, resetForm)
                 }}
                 onBlur={setFieldTouched}
                 isSearchable={false}
@@ -70,9 +72,9 @@ export const ReactRRuleGenerator = props => {
                 <ErrorMessage name="frequency" />
               </div>
             </div>
-
-            {selectedFrequencyType ===
-              RruleHelper.FREQUENCY_VALUES.ONE_TIME.value && (
+{console.log('formik values', values)}
+            {(selectedFrequencyType === RruleHelper.FREQUENCY_VALUES.ONE_TIME.value ||
+              selectedFrequencyType === RruleHelper.FREQUENCY_VALUES.ONE_TIME_READ_ONLY.value) && (
               <div className="form-group position_relative">
                 <label htmlFor="dueDate">
                   {RruleHelper.LABELS.DUE_DATE}{' '}
@@ -88,7 +90,7 @@ export const ReactRRuleGenerator = props => {
                   onChange={(name, value) => {
                     if (value !== null) {
                       setFieldValue('dueDate', value)
-                      handleDueDateOnChange(value, values)
+                      handleDueDateOnChange(value, values, setFieldValue)
                     }
                   }}
                   onBlur={setFieldTouched}
@@ -101,7 +103,8 @@ export const ReactRRuleGenerator = props => {
               </div>
             )}
 
-            {selectedFrequencyType !== RruleHelper.FREQUENCY_VALUES.ONE_TIME.value && (
+            {(selectedFrequencyType !== RruleHelper.FREQUENCY_VALUES.ONE_TIME.value &&
+            selectedFrequencyType !== RruleHelper.FREQUENCY_VALUES.ONE_TIME_READ_ONLY.value) && (
               <div>
                 {(selectedFrequencyType === RruleHelper.FREQUENCY_VALUES.WEEKLY.value ||
                 selectedFrequencyType === RruleHelper.FREQUENCY_VALUES.BI_WEEKLY.value) && (
@@ -109,14 +112,16 @@ export const ReactRRuleGenerator = props => {
                     <p>
                       {RruleHelper.LABELS.WEEKLY_OPTION_TEXT}
                     </p>
-                    {RruleHelper.WEEK_DAYS.map(item => {
+                    {values.weekDays.map(item => {
                       return (
                         <ClickableWeekDays
                           key={item.value}
-                          onClick={() => handleWeekDatesSelect(item.value, values)}
+                          // onClick={() => handleMultipleWeekDatesSelect(item.value, values, setFieldValue)}
+                          onClick={() => handleSingleWeekDatesSelect(item.value, values, setFieldValue)}
                           name={item.label}
                           value={item.value}
                           setFieldTouched={setFieldTouched}
+                          defaultSelected={item.isSelected}
                         />
                       )
                     })}
@@ -159,7 +164,7 @@ export const ReactRRuleGenerator = props => {
                           'endDate',
                           moment(value, 'MM/DD/YYYY').add(1, 'days')
                         )
-                        handleStartDateOnChange(value, values)
+                        handleStartDateOnChange(value, values, setFieldValue)
                       }
                     }}
                     onBlur={setFieldTouched}
@@ -186,7 +191,7 @@ export const ReactRRuleGenerator = props => {
                     onChange={(name, value) => {
                       if (value !== null) {
                         setFieldValue('endDate', value)
-                        handleEndDateOnChange(value, values)
+                        handleEndDateOnChange(value, values, setFieldValue)
                       }
                     }}
                     onBlur={setFieldTouched}
