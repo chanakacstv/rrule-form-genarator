@@ -9,7 +9,9 @@ export const GenerateMonthlyRRule = (
   days,
   frequencyInterval
 ) => {
+  const selectedDatesMonthlyArray = selectedDatesMonthly.map(month => month.value)
   const weekDay = []
+
   if (days.value === 'SU') {
     weekDay.push(RRule.SU)
   } else if (days.value === 'MO') {
@@ -30,14 +32,12 @@ export const GenerateMonthlyRRule = (
     freq: RRule.MONTHLY,
     interval: frequencyInterval,
     ...(setBy !== 'day' && { wkst: RRule.SU }),
-    ...(setBy !== 'day' && { bymonthday: selectedDatesMonthly }),
+    ...(setBy !== 'day' && { bymonthday: selectedDatesMonthlyArray }),
     ...(setBy === 'day' && { bysetpos: parseInt(weekType.value) }),
     ...(setBy === 'day' && { byweekday: weekDay }),
     dtstart: startDate,
     until: endDate
   })
-
-  console.log('monthlyRule', monthlyRule.toString())
 
   return monthlyRule.toString()
   // return RRuleString(monthlyRule, startDate)

@@ -15,7 +15,8 @@ export const ClickableMonthDays = prop => {
     isFrom,
     values,
     setFieldValue,
-    setFieldTouched
+    setFieldTouched,
+    errors
   } = prop
 
   const {
@@ -47,18 +48,20 @@ export const ClickableMonthDays = prop => {
       </label>
 
       <div className="form-group">
-        {RruleHelper.DAYS_OF_MONTH.map(item => {
+        {values.monthDays.map(item => {
           return (
             <ClickableWeekDays
               key={item.value}
-              name={item}
-              value={item}
-              onClick={() => handleMonthDatesSelect(item, values, setFieldValue)}
-              longItem={item === 'Last Day'}
+              name={item.label}
+              value={item.value}
+              onClick={() => handleMonthDatesSelect(item.value, values, setFieldValue)}
+              longItem={item.value === -1}
               disabled={values.setBy === 'day'}
+              defaultSelected={item.isSelected}
             />
           )
         })}
+        {errors.monthDays && <div className="error-message">{errors.monthDays}</div>}
 
         <label className="checbox-label-wrp font_12">
           <Field

@@ -30,7 +30,7 @@ export const GenerateWeeklyRRule = (startDate, endDate, selectedWeekDays, freque
     dtstart: startDate,
     until: endDate
   })
-  
+
   return weeklyRule.toString()
   // return RRuleString(weeklyRule, startDate)
 }
