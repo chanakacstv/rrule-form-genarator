@@ -1,5 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
 import { Formik, Form, ErrorMessage, Field } from 'formik'
@@ -27,20 +27,22 @@ export const ReactRRuleGenerator = props => {
     setEndMinimumDate,
     handleStartDateOnChange,
     handleEndDateOnChange,
-    formCustomValidate,
+    // formCustomValidate,
+    formErrors,
+    setFormErrors
   } = useContext(GeneratorContext)
 
   return (
     <Formik
       enableReinitialize
       initialValues={FORM_INITIAL_VALUES}
-      validationSchema={FORM_YUP_VALIDATIONS}
-      validate={values => formCustomValidate(values)}
+      // validationSchema={FORM_YUP_VALIDATIONS}
+      // validate={values => formCustomValidate(values)}
       onSubmit={(values, actions) => formSumbit(values, actions)}
       render={
       ({
         values,
-        errors,
+        // errors,
         touched,
         isSubmitting,
         handleChange,
@@ -123,6 +125,9 @@ export const ReactRRuleGenerator = props => {
                             selectedFrequencyType === RruleHelper.FREQUENCY_VALUES.WEEKLY.value
                             ? handleMultipleWeekDatesSelect(item.value, values, setFieldValue)
                             : handleSingleWeekDatesSelect(item.value, values, setFieldValue)
+
+                            setFieldTouched('weekDays', true)
+                            setFormErrors({})
                           }}
                           name={item.label}
                           value={item.value}
@@ -131,7 +136,7 @@ export const ReactRRuleGenerator = props => {
                         />
                       )
                     })}
-                    {errors.weekDays && <div className="error-message">{errors.weekDays}</div>}
+                    {values.errors.weekDays && <div className="error-message">{values.errors.weekDays}</div>}
                   </div>
                 )}
 
@@ -141,7 +146,7 @@ export const ReactRRuleGenerator = props => {
                     setFieldValue={setFieldValue}
                     handleMonthDatesSelect={handleMonthDatesSelect}
                     isFrom="sop"
-                    errors={errors}
+                    errors={values.errors}
                   />
                 )}
 

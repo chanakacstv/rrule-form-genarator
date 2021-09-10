@@ -23,7 +23,8 @@ const GeneratorProvider = ({ children, componentProps }) => {
     monthDays: RruleHelper.MONTH_DAYS,
     days: RruleHelper.FULL_WEEK_DAYS[0],
     rrule: '',
-    setBy: 'date'
+    setBy: 'date',
+    errors: {}
   }
 
   const [selectedFrequencyType, setSelectedFrequencyType] = useState(
@@ -35,6 +36,7 @@ const GeneratorProvider = ({ children, componentProps }) => {
     new Date(new Date()).setDate(new Date(new Date()).getDate() + 1)
   )
   const [selectedFrequency, setSelectedFrequency] = useState(FREQUENCY_FORM_INIT_VALUES.frequency)
+  const [formErrors, setFormErrors] = useState(FREQUENCY_FORM_INIT_VALUES.errors)
 
   const FORM_INITIAL_VALUES = rruleFormValue
 
@@ -98,7 +100,7 @@ const GeneratorProvider = ({ children, componentProps }) => {
   }, [])
 
   // Form validation
-  const formCustomValidate = values => {
+  const formCustomValidate = values => { console.log('errors triger 1', values.frequency)
     const errors = {}
     const { weekDays, monthDays, setBy } = values
 
@@ -130,6 +132,11 @@ const GeneratorProvider = ({ children, componentProps }) => {
         console.log(`Something went wrong!.`);
     }
 
+    setRruleFormValue({
+      ...rruleFormValue,
+      errors
+    });
+    console.log('errors triger 2', errors)
     return errors
   }
 
@@ -142,6 +149,8 @@ const GeneratorProvider = ({ children, componentProps }) => {
     resetForm,
    ) => {
     const { value } = selectedValue
+    const { weekDays, monthDays, setBy } = formValues
+    let errors = {}
 
     FREQUENCY_FORM_INIT_VALUES.weekDays.map(weekDays => {
       weekDays.isSelected = false
@@ -152,6 +161,8 @@ const GeneratorProvider = ({ children, componentProps }) => {
       monthDays.isSelected = false
       return monthDays 
     })
+
+    const selectedDatesOfWeeks = selectedDatesOfWeek.filter(weekDay => weekDay.isSelected)
 
     setSelectedFrequency(selectedValue)
 
@@ -171,16 +182,47 @@ const GeneratorProvider = ({ children, componentProps }) => {
       ...FREQUENCY_FORM_INIT_VALUES,
       frequency: selectedValue,
     }
-    const rrule = GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
+    const rrule = GenerateRRule(updatedFormValues, selectedDatesOfWeeks, selectedDatesOfMonth)
 
     setFieldValue('rrule', rrule)
 
     clearRRuleStates()
 
     setSelectedFrequencyType(value)
+
+    switch (selectedValue.value) {
+      case RruleHelper.FREQUENCY_VALUES.WEEKLY.value:
+        if (!weekDays.some(weekDay => weekDay.isSelected)) {
+          errors.weekDays = 'Please select a day'
+        } else {
+          errors.weekDays = {}
+        }
+        break
+      case RruleHelper.FREQUENCY_VALUES.BI_WEEKLY.value:
+        if (!weekDays.some(weekDay => weekDay.isSelected)) {
+          errors.weekDays = 'Please select a day'
+        } else {
+          errors = {}
+        }
+        break
+      case RruleHelper.FREQUENCY_VALUES.MONTHLY.value:
+        if (setBy === 'date') {
+          if (!monthDays.some(monthDay => monthDay.isSelected)) {
+            errors.monthDays = 'Please select a day'
+          } else {
+            errors = {}
+          }
+        }
+        break
+      default:
+        errors = {}
+    }
+
+    setFormErrors(errors)
     setRruleFormValue({
       ...updatedFormValues,
-      rrule
+      rrule,
+      errors
     })
   }
 
@@ -199,7 +241,7 @@ const GeneratorProvider = ({ children, componentProps }) => {
       rrule
     })
     setFieldValue('rrule', rrule)
-   }
+  }
 
   const handleStartDateOnChange = (
     selectedValue,
@@ -217,7 +259,7 @@ const GeneratorProvider = ({ children, componentProps }) => {
       rrule
     })
     setFieldValue('rrule', rrule)
-   }
+  }
 
   const handleEndDateOnChange = (
     selectedValue,
@@ -246,6 +288,7 @@ const GeneratorProvider = ({ children, componentProps }) => {
     formValues,
     setFieldValue
    ) => {
+    let errors = {}
     const selectedWeekDays = formValues.weekDays.map(weekDays => {
       if (value === weekDays.value) {
         weekDays.isSelected = !weekDays.isSelected
@@ -261,11 +304,19 @@ const GeneratorProvider = ({ children, componentProps }) => {
     })
     const rrule = GenerateRRule(formValues, selectedWeekDaysArray, selectedDatesOfMonth)
 
+    if (selectedWeekDaysArray.length === 0) {
+      errors.weekDays = 'Please select a day'
+    } else {
+      errors = {}
+    }
+
     setSelectedDatesOfWeek(selectedWeekDays)
     setRruleFormValue({
       ...formValues, 
-      rrule
+      rrule,
+      errors
     })
+    setFormErrors(errors)
     setFieldValue(
       'weekDays',
       selectedWeekDays
@@ -278,6 +329,7 @@ const GeneratorProvider = ({ children, componentProps }) => {
     formValues,
     setFieldValue
    ) => {
+    let errors = {}
     const selectedWeekDays = formValues.weekDays.map(weekDays => {
       if (value === weekDays.value) {
         weekDays.isSelected = !weekDays.isSelected
@@ -295,11 +347,19 @@ const GeneratorProvider = ({ children, componentProps }) => {
     })
     const rrule = GenerateRRule(formValues, selectedWeekDaysArray, selectedDatesOfMonth)
 
+    if (selectedWeekDaysArray.length === 0) {
+      errors.weekDays = 'Please select a day'
+    } else {
+      errors = {}
+    }
+
     setSelectedDatesOfWeek(selectedWeekDays)
     setRruleFormValue({
       ...formValues, 
-      rrule
+      rrule,
+      errors
     })
+    setFormErrors(errors)
     setFieldValue(
       'weekDays',
       selectedWeekDays
@@ -312,6 +372,7 @@ const GeneratorProvider = ({ children, componentProps }) => {
     formValues,
     setFieldValue
    ) => {
+    let errors = {}
     const selectedMonthDays = formValues.monthDays.map(monthDays => {
       if (value === monthDays.value) {
         monthDays.isSelected = !monthDays.isSelected
@@ -327,11 +388,19 @@ const GeneratorProvider = ({ children, componentProps }) => {
     })
     const rrule = GenerateRRule(formValues, selectedDatesOfWeek, selectedMonthDaysArray)
 
+    if (selectedMonthDaysArray.length === 0) {
+      errors.monthDays = 'Please select a day'
+    } else {
+      errors = {}
+    }
+
     setSelectedDatesOfMonth(selectedMonthDaysArray)
     setRruleFormValue({
       ...formValues, 
-      rrule
+      rrule,
+      errors
     })
+    setFormErrors(errors)
     setFieldValue(
       'monthDays',
       selectedMonthDays
@@ -345,15 +414,30 @@ const GeneratorProvider = ({ children, componentProps }) => {
     setFieldValue
    ) => {
     const { value } = event.target
+    let errors = {}
     const updatedFormValues = {
       ...formValues,
       setBy: value,
     }
     const rrule = GenerateRRule(updatedFormValues, selectedDatesOfWeek, selectedDatesOfMonth)
+
+    const selectedMonthDaysArray = selectedDatesOfMonth.filter(monthDays => {
+      if (monthDays.isSelected) {
+        return monthDays
+      }
+    })
+    if (value === 'date' && selectedMonthDaysArray.length === 0) {
+      errors.monthDays = 'Please select a day'
+    } else {
+      errors = {}
+    }
+
     setRruleFormValue({
       ...updatedFormValues,
-      rrule
+      rrule,
+      errors
     })
+    setFormErrors(errors)
     setFieldValue('rrule', rrule)
   }
 
@@ -442,7 +526,9 @@ const GeneratorProvider = ({ children, componentProps }) => {
         handleSetByOnChange,
         handleWeekTypeOnChange,
         handleDaysTypeOnChange,
-        formCustomValidate
+        formCustomValidate,
+        formErrors,
+        setFormErrors
       }}
     >
       {children}

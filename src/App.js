@@ -18,14 +18,14 @@ function App(props) {
     monthDays: RruleHelper.MONTH_DAYS,
     days: RruleHelper.FULL_WEEK_DAYS[0],
     rrule: '',
-    setBy: 'date'
+    setBy: 'date',
+    errors: {}
   }
   const [rruleFormValue, setRruleFormValue] = useState(DEFAULT_INIT_VALUES)
-
-  // console.log('Local time', rrulestr('DTSTART:20210830T122229Z\nRRULE:FREQ=WEEKLY;INTERVAL=1;WKST=SU;BYDAY=SU,MO;UNTIL=20210831T122229Z'))
-
+  
   useEffect(() => {
-    console.log('rruleFormValue from app', rruleFormValue)
+    console.log('rruleFormValue from app', rruleFormValue.rrule)
+    console.log('rruleFormValue from app', rrulestr('DTSTART:20210909T115047Z\nRRULE:FREQ=MONTHLY;INTERVAL=1;WKST=SU;BYMONTHDAY=1,2,3,4,5,6,7,8,27,28,29,30,31,-1;UNTIL=20210910T115047Z'))
   }, [rruleFormValue])
 
   return (

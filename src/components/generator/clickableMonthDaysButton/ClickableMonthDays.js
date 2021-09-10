@@ -61,7 +61,7 @@ export const ClickableMonthDays = prop => {
             />
           )
         })}
-        {errors.monthDays && <div className="error-message">{errors.monthDays}</div>}
+        {values.setBy === 'date' && errors.monthDays && <div className="error-message">{errors.monthDays}</div>}
 
         <label className="checbox-label-wrp font_12">
           <Field
