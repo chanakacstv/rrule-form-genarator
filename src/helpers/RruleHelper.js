@@ -2,11 +2,12 @@ export const RruleHelper = Object.freeze({
   LABELS: {
     FREQUENCY: 'Frequency',
     DUE_DATE: 'Due Date',
-    MONTHLY_OPTION_TEXT: "Select the day of the month you'd like this SOP to be assigned",
     SET_BY_DATE: 'SET BY DATE',
     SET_BY_DAY_OF_THE_MONTH: 'SET BY DAY OF THE MONTH',
     START_DATE: 'Start Date',
-    END_DATE: ' End Date',
+    END_DATE: 'End Date',
+    WEEKLY_OPTION_TEXT: `Select the days of the week you'd like this SOP to be assigned`,
+    MONTHLY_OPTION_TEXT: `Select the days of the month you'd like this SOP to be assigned`,
   },
 
   DEFAULT_FREQUENCY: [

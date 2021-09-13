@@ -38,9 +38,10 @@ export const ReactRRuleGenerator = props => {
       initialValues={FORM_INITIAL_VALUES}
       // validationSchema={FORM_YUP_VALIDATIONS}
       // validate={values => formCustomValidate(values)}
-      onSubmit={(values, actions) => formSumbit(values, actions)}
-      render={
-      ({
+      // onSubmit={(values, actions) => formSumbit(values, actions)}
+      data-test="rrule-formik-element"
+    >
+      {({
         values,
         // errors,
         touched,
@@ -52,11 +53,11 @@ export const ReactRRuleGenerator = props => {
         setFieldTouched,
         resetForm
       }) => (
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} data-test="rrule-form-element">
           <div className="form-body">
             <div className="form-group">
-              <label htmlFor="frequency">
-                {RruleHelper.LABELS.FREQUENCY}
+              <label htmlFor="frequency" data-test="rrule-form-frequency-label-element">
+                {RruleHelper.LABELS.FREQUENCY}{' '}
                 <span className="required">*</span>
               </label>
               <CustomSelect
@@ -72,6 +73,7 @@ export const ReactRRuleGenerator = props => {
                 placeholder=""
                 setFieldValue={setFieldValue}
                 value={values.frequency}
+                data-test="rrule-form-frequency-select-element"
               />
               <div className="error-message">
                 <ErrorMessage name="frequency" />
@@ -81,7 +83,7 @@ export const ReactRRuleGenerator = props => {
             {(selectedFrequencyType === RruleHelper.FREQUENCY_VALUES.ONE_TIME.value ||
               selectedFrequencyType === RruleHelper.FREQUENCY_VALUES.ONE_TIME_READ_ONLY.value) && (
               <div className="form-group position_relative">
-                <label htmlFor="dueDate">
+                <label htmlFor="dueDate" data-test="rrule-form-due-date-label-element">
                   {RruleHelper.LABELS.DUE_DATE}{' '}
                   <span className="required red">*</span>
                 </label>
@@ -100,6 +102,7 @@ export const ReactRRuleGenerator = props => {
                   }}
                   onBlur={setFieldTouched}
                   placeholderText=""
+                  data-test="rrule-form-due-date-date-picker-element"
                 />
                 <i className="mdi mdi-calendar-blank font_22" />
                 <div className="error-message">
@@ -114,7 +117,7 @@ export const ReactRRuleGenerator = props => {
                 {(selectedFrequencyType === RruleHelper.FREQUENCY_VALUES.WEEKLY.value ||
                 selectedFrequencyType === RruleHelper.FREQUENCY_VALUES.BI_WEEKLY.value) && (
                   <div className="form-group">
-                    <p>
+                    <p data-test="rrule-form-weekly-label-element">
                       {RruleHelper.LABELS.WEEKLY_OPTION_TEXT}
                     </p>
                     {values.weekDays.map(item => {
@@ -133,6 +136,7 @@ export const ReactRRuleGenerator = props => {
                           value={item.value}
                           setFieldTouched={setFieldTouched}
                           defaultSelected={item.isSelected}
+                          data-test="rrule-form-weekly-component"
                         />
                       )
                     })}
@@ -141,18 +145,24 @@ export const ReactRRuleGenerator = props => {
                 )}
 
                 {(selectedFrequencyType === RruleHelper.FREQUENCY_VALUES.MONTHLY.value) && (
-                  <ClickableMonthDays
-                    values={values}
-                    setFieldValue={setFieldValue}
-                    handleMonthDatesSelect={handleMonthDatesSelect}
-                    isFrom="sop"
-                    errors={values.errors}
-                  />
+                  <>
+                    <p data-test="rrule-form-monthly-label-element">
+                      {RruleHelper.LABELS.MONTHLY_OPTION_TEXT}
+                    </p>
+                    <ClickableMonthDays
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleMonthDatesSelect={handleMonthDatesSelect}
+                      isFrom="sop"
+                      errors={values.errors}
+                      data-test="rrule-form-month-component"
+                    />
+                  </>
                 )}
 
                 <Row>
                   <Col md={6} className="form-group position_relative">
-                    <label htmlFor="startDate">
+                    <label htmlFor="startDate" data-test="rrule-form-start-date-label">
                       {RruleHelper.LABELS.START_DATE}{' '}
                       <span className="required red">*</span>
                     </label>
@@ -180,6 +190,7 @@ export const ReactRRuleGenerator = props => {
                       }}
                       onBlur={setFieldTouched}
                       placeholderText=""
+                      data-test="rrule-form-start-date-date-picker"
                     />
                     <i className="mdi mdi-calendar-blank font_22" />
                     <div className="error-message">
@@ -188,7 +199,7 @@ export const ReactRRuleGenerator = props => {
                   </Col>
                 
                   <Col md={6} className="form-group position_relative">
-                    <label htmlFor="endDate">
+                    <label htmlFor="endDate" data-test="rrule-form-end-date-label">
                       {RruleHelper.LABELS.END_DATE}{' '}
                       <span className="required red">*</span>
                     </label>
@@ -207,6 +218,7 @@ export const ReactRRuleGenerator = props => {
                       }}
                       onBlur={setFieldTouched}
                       placeholderText=""
+                      data-test="rrule-form-end-date-date-picker"
                     />
                     <i className="mdi mdi-calendar-blank font_22" />
                     <div className="error-message">
@@ -219,14 +231,6 @@ export const ReactRRuleGenerator = props => {
           </div>
         </Form>
       )}
-    />
+    </Formik>
   )
-}
-
-ReactRRuleGenerator.propTypes = {
-  isLoading: PropTypes.bool
-}
-
-ReactRRuleGenerator.defaultProps = {
-  isLoading: false
 }
