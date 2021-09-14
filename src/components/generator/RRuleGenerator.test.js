@@ -45,7 +45,7 @@ const defaultContextValues = {
  * @param { object } testValues - Context values specific to this setup.
  * @return { mount }
  */
- const setup = (props = {}, values = {}) => {
+const setup = (props = {}, values = {}) => {
   const setupProps = { ...defaultProps, ...props }
   const setupContextValue = { ...defaultContextValues, ...values }
 

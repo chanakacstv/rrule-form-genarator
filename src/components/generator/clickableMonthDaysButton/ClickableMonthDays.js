@@ -27,10 +27,6 @@ export const ClickableMonthDays = prop => {
 
   return (
     <>
-      {isFrom === 'sop' && (
-        <p>{RruleHelper.LABELS.MONTHLY_OPTION_TEXT}</p>
-      )}
-
       <label className="checbox-label-wrp">
         <Field
           className="mr_5"
@@ -43,6 +39,7 @@ export const ClickableMonthDays = prop => {
             handleSetByOnChange(e, values, setFieldValue)
           }}
           value="date"
+          data-test="set-by-date-field"
         />
         {RruleHelper.LABELS.SET_BY_DATE}{' '}
       </label>
@@ -58,6 +55,7 @@ export const ClickableMonthDays = prop => {
               longItem={item.value === -1}
               disabled={values.setBy === 'day'}
               defaultSelected={item.isSelected}
+              data-test="week-day-element"
             />
           )
         })}
@@ -75,6 +73,7 @@ export const ClickableMonthDays = prop => {
               handleSetByOnChange(e, values, setFieldValue)
             }}
             value="day"
+            data-test="set-by-day-field"
           />
           {RruleHelper.LABELS.SET_BY_DAY_OF_THE_MONTH}{' '}
         </label>
@@ -95,6 +94,7 @@ export const ClickableMonthDays = prop => {
             setFieldValue={setFieldValue}
             value={values.weekType}
             isDisabled={values.setBy === 'date'}
+            data-test="week-type-field"
           />
         </div>
 
@@ -114,13 +114,13 @@ export const ClickableMonthDays = prop => {
             setFieldValue={setFieldValue}
             value={values.days}
             isDisabled={values.setBy === 'date'}
+            data-test="days-type-field"
           />
         </div>
       </div>
     </>
   )
 }
-
 
 ClickableMonthDays.propTypes = {
   handleMonthDatesSelect: PropTypes.func.isRequired,

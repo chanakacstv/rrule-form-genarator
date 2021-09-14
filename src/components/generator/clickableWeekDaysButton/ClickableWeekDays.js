@@ -22,6 +22,7 @@ export const ClickableWeekDays = props => {
       onClick={() => onClick()}
       value={value}
       disabled={disabled}
+      data-test="week-day-element"
     >
       {name}
     </Button>
