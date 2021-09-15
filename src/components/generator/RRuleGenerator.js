@@ -161,11 +161,12 @@ export const ReactRRuleGenerator = props => {
                 )}
 
                 <Row>
-                  <Col md={6} className="form-group position_relative">
+                  <Col md={6}>
                     <label htmlFor="startDate" data-test="rrule-form-start-date-label">
                       {RruleHelper.LABELS.START_DATE}{' '}
                       <span className="required red">*</span>
                     </label>
+                    <div className="form-group horizontal-datepicker mb_0">
                     <CustomDatePicker
                       name="startDate"
                       id="startDate"
@@ -195,6 +196,7 @@ export const ReactRRuleGenerator = props => {
                     <i className="mdi mdi-calendar-blank font_22" />
                     <div className="error-message">
                       <ErrorMessage name="startDate" />
+                    </div>
                     </div>
                   </Col>
                 
